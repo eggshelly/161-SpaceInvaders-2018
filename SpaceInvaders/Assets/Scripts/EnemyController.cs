@@ -5,6 +5,7 @@ using UnityEngine.Events;   //to move , for win condition
 
 public class EnemyController : MonoBehaviour
 {
+    public static EnemyController enemyController;
     [SerializeField] private GameObject enemy;
     //[SerializeField] private int width = 11;
     //[SerializeField] private int height = 5;
@@ -16,9 +17,10 @@ public class EnemyController : MonoBehaviour
     private GameObject[,] enemyList = new GameObject[11, 5];
     private void Awake()
     {
+        enemyController = this;
         //Debug.Log(enemyList.GetLength(0));
         generate();
-        rng_shoot_time = Random.Range(2f, 5f);
+        rng_shoot_time = Random.Range(.3f, 3f);
     }
 
     // Start is called before the first frame update
@@ -48,7 +50,9 @@ public class EnemyController : MonoBehaviour
         if(shoot_time > rng_shoot_time)
         {
             shoot();
-            rng_shoot_time = Random.Range(2f, 5f);
+            //Debug.Log("enemy shoot now");
+            rng_shoot_time = Random.Range(.3f, 3f);
+            shoot_time = 0;
         }
 
     }
@@ -63,7 +67,7 @@ public class EnemyController : MonoBehaviour
                 GameObject insta = Instantiate(enemy, this.transform);
                 insta.transform.localPosition = spawn;
                 Enemy temp = insta.GetComponent<Enemy>();
-                temp.init(i);
+                temp.init(j);
                 enemyList[i, j] = insta;
             }
         }
@@ -73,7 +77,7 @@ public class EnemyController : MonoBehaviour
     {
         if (canMoveSide())
         {
-            int move = moveRight ? 1 : -1;
+            float move = moveRight ? 0.3f : -.3f;
             this.transform.position = new Vector2(this.transform.position.x +move, this.transform.position.y);
         }
         else
@@ -111,7 +115,11 @@ public class EnemyController : MonoBehaviour
             for (int j = 0; j < enemyList.GetLength(1); j++)
             {
                 if (enemyList[i, j] != null)
+                {
+                    //Debug.Log(i + " " + j);
                     return false;
+                }
+                    
             }
         }
         return true;
@@ -121,11 +129,14 @@ public class EnemyController : MonoBehaviour
         while (true)
         {
             int col = Random.Range(0, enemyList.GetLength(0)+1);
+
             int row = getBottomIndex(col);
 
-            if(enemyList[col,row] != null)
+            if(row != -1 && enemyList[col,row] != null)
             {
+                //Debug.Log(col+" "+row);
                 enemyList[col, row].GetComponent<Enemy>().shoot();
+                //enemyList[col, row].GetComponent<Enemy>().highlight();
                 return;
             }
                 
@@ -133,14 +144,20 @@ public class EnemyController : MonoBehaviour
     }
     public int getBottomIndex(int col)
     {
-        int max = 0;
-        for(int i = enemyList.GetLength(1)-1; i >= 0 ; i--)
+        for(int i = 0; i< enemyList.GetLength(1); i++)
         {
-            if (enemyList[col, i] == null)
-                return max;
-            max = i;
+            try
+            {
+                if (enemyList[col, i] != null)
+                    return i;
+            }
+            catch
+            {
+                return -1;
+            }
+
         }
-        return max;
+        return -1;
     }
 }
  

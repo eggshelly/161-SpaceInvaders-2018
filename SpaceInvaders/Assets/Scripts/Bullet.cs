@@ -4,6 +4,9 @@ using UnityEngine;
 using UnityEngine.Events;   //to tell the player hey you can shoot again
 //if an enemy dies, check for win...
 
+
+//public class IntUnityEvent
+//{}
 public class Bullet : MonoBehaviour
 {
 
@@ -42,14 +45,22 @@ public class Bullet : MonoBehaviour
         }
         if (this.CompareTag("PlayerBullet") && other.CompareTag("Enemy"))
         {
+            int point = other.gameObject.GetComponent<Enemy>().getPoints();
             Destroy(other.gameObject);
             Destroy(gameObject);
             playerBulleteCollide.Invoke();
+            LevelController.levelController.addPoints(point);
+            Debug.Log(EnemyController.enemyController.win());
+            if (EnemyController.enemyController.win())
+            {
+                LevelController.levelController.onWin();
+            }
         }
         else if (this.CompareTag("EnemyBullet") && other.CompareTag("Player"))
-        {
-            //life--
+        { 
             Destroy(gameObject);
+            LevelController.levelController.decreaseLife();
+            //LevelController.levelController.checkGameOver();
         }
     }
    

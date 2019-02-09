@@ -5,6 +5,11 @@ using UnityEngine.SceneManagement;
 
 public class MenuController : MonoBehaviour
 {
+
+    private void Awake()
+    {
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -29,8 +34,12 @@ public class MenuController : MonoBehaviour
 
     public void onResumeClick()
     {
+        LevelController.levelController.TogglePause();
+    }
+    public void onPlayAgainClick()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         Time.timeScale = 1;
-        //close the pause menu
     }
 
 }

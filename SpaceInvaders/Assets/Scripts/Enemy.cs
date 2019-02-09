@@ -5,7 +5,7 @@ using UnityEngine.Events;
 
 public class Enemy : MonoBehaviour
 {
-    [SerializeField] GameObject bullet;
+    [SerializeField] private GameObject bullet;
     private int points = 0;
 
     private BoxCollider2D boxCollider;
@@ -21,10 +21,6 @@ public class Enemy : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {
-        
-    }
-    private void OnTriggerEnter2D(Collider2D collision)
     {
         
     }
@@ -46,7 +42,7 @@ public class Enemy : MonoBehaviour
         
     }
 
-    public void moveSide(int x)
+    public void moveSide(float x)
     {
         this.transform.position = new Vector2(this.transform.position.x + x, this.transform.position.y);
     }
@@ -57,7 +53,8 @@ public class Enemy : MonoBehaviour
 
     public void shoot()
     {
-        GameObject shot = Instantiate(bullet, this.transform);
+        GameObject shot = Instantiate(bullet);
+        shot.transform.position = this.transform.position;
 
         //shot.GetComponent<Rigidbody2D>().velocity = Vector2.down;
         Bullet b = shot.GetComponent<Bullet>();
@@ -66,5 +63,17 @@ public class Enemy : MonoBehaviour
     public int getPoints()
     {
         return points;
+    }
+    public void highlight()
+    {
+        this.GetComponent<SpriteRenderer>().color = Color.cyan;
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("GameOver"))
+        {
+            LevelController.levelController.gameOver();
+        }
     }
 }
